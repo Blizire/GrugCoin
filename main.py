@@ -78,8 +78,25 @@ async def mining(ref_client):
                 await give_coin(fin_miner)
 
 
-class MyClient(discord.Client):
+async def message_splitting(bot_msg, origin_msg):
+    if len(bot_msg) >= 2000:
+        times_to_split = floor(len(bot_msg) / 2000)
+        for x in range(times_to_split):
+            if x == 0:
+                await origin_msg.channel.send(bot_msg[0:1999])
+            start_index = 2000
+            end_index = 3999
+            if end_index > len(bot_msg):
+                end_index = len(bot_msg) - 1
+                await origin_msg.channel.send(bot_msg[start_index:end_index])
+                return
+            await origin_msg.channel.send(bot_msg[start_index:end_index])
+            start_index += 2000
+            end_index += 2000
+        return
 
+
+class MyClient(discord.Client):
     async def on_ready(self):
         print("Discord client started")
         self.loop.create_task(mining(self))
@@ -108,6 +125,8 @@ class MyClient(discord.Client):
             msg = "{name} has {val}gc".format(name=nick, val=wallet)
             await message.channel.send(msg)
 
+        # debating on taking this command out and just use web server
+        # to display every ones results
         if message.content == "gbook":
             # gbook command allows to the ability for users to print
             # everybodys crypto wallet value
@@ -121,73 +140,8 @@ class MyClient(discord.Client):
                 # this is to protect messages from being to big
                 # to send. discord.py will handle rate limiting
                 # issues.
-                if len(msg) >= 2000:
-                    times_to_split = floor(len(msg) / 2000)
-                    for x in range(times_to_split):
-                        if x == 0:
-                            await message.channel.send(msg[0:1999])
-                        start_index = 2000
-                        end_index = 3999
-                        if end_index > len(msg):
-                            end_index = len(msg) - 1
-                            await message.channel.send(msg[start_index:end_index])
-                            return
-                        await message.channel.send(msg[start_index:end_index])
-                        start_index += 2000
-                        end_index += 2000
-                    return
+                await message_splitting(msg, message)
             await message.channel.send(msg)
-
-        """
-        if "ggamble" in message.content:
-            msg = ""
-            try:
-                msg = message.content.split()
-                msg_len = len(msg)
-                if msg_len < 2 or msg_len > 2:
-                    await message.channel.send("ggamble\ncommand to play the bot in rock paper scissors to win 0.15gc or lose 0.1gc\nexample:\nggamble rock")
-                    return
-        
-            except:
-                return
-            msg = message.content.split()
-            plays = ["rock", "paper", "scissors"]
-            bot_choice = choice(plays)
-            player_choice = msg[1]
-            userid = message.author.id
-            if player_choice not in plays:
-                await message.channel.send("Your choice must be rock paper or scissors!!!")
-            else:
-                if player_choice == "rock":
-                    if bot_choice == "rock":
-                        await message.channel.send("YOU TIE")
-                    if bot_choice == "paper":
-                        await message.channel.send("YOU LOSE")
-                        await take_coin(userid, 0.1)
-                    if bot_choice == "scissors":
-                        await give_coin(userid, 0.15)
-                        await message.channel.send("YOU WIN")
-                if player_choice == "paper":
-                    if bot_choice == "paper":
-                        await message.channel.send("YOU TIE")
-                    if bot_choice == "scissors":
-                        await take_coin(userid, 0.1)
-                        await message.channel.send("YOU LOSE")
-                    if bot_choice == "rock":
-                        await give_coin(userid, 0.15)
-                        await message.channel.send("YOU WIN")
-                if player_choice == "scissors":
-                    if bot_choice == "scissors":
-                        await message.channel.send("YOU TIE")
-                    if bot_choice == "rock":
-                        await take_coin(userid, 0.1)
-                        await message.channel.send("YOU LOSE")
-                    if bot_choice == "paper":
-                        await give_coin(userid, 0.15)
-                        await message.channel.send("YOU WIN")
-                await message.channel.send("Bot picked {choice}".format(choice=bot_choice))
-        """
-
 
 
 client = MyClient()
