@@ -2,3 +2,4 @@ conf.txt
 venv
 .idea
 __pycache__/
+db.json
