@@ -15,11 +15,11 @@ from tinydb.operations import add, subtract
 from random import uniform, choice
 from math import floor
 from edict import loader
-
+from gbook_html import GBookHtml
 
 config_settings = loader("conf.txt")
 client_token = config_settings["client_token"]
-
+mining_length = int(config_settings["mining_length"])
 
 def get_mining_members(client_ref):
     member_maps = []
@@ -68,7 +68,7 @@ async def take_coin(userid, coin_value=0.1):
 
 
 async def mining(ref_client):
-    mining_length = 60
+    global mining_length
     print("mining active")
     while True:
         miners = get_mining_members(ref_client)
@@ -100,6 +100,7 @@ class MyClient(discord.Client):
     async def on_ready(self):
         print("Discord client started")
         self.loop.create_task(mining(self))
+        self.loop.create_task(GBookHtml(self, mining_length).run())
 
     async def on_message(self, message):
         # don't respond to ourselves

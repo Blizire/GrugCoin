@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>grugserve</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> 
+    <style>
+      *{
+        padding:0;
+        margin:0;
+        box-sizing: border-box;
+        font-family: 'Press Start 2P', cursive;
+        cursor:crosshair;
+        user-select: none;
+      }
+
+      body{
+        background-color:black;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height:100vh;
+      }
+
+      #wrapper{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;        
+      }
+
+      h1{
+        color:white;
+        padding:20px;
+      }
+
+      h1:hover{
+        color:blueviolet;
+      }
+
+      #easter_egg{
+        position: absolute;
+        top:0;
+        left:0;
+        color:black;
+      }
+
+      #easter_egg:visited{
+        color:black;
+      }
+
+      button{
+        color:white;
+        background-color:rgba(0,0,0,0);
+        border:0;
+        padding:20px;
+        align-self: flex-end;
+      }
+
+      button:hover{
+        color:blueviolet;
+      }
+    </style>
+  </head>
+  <body>
+    <a id="easter_egg" href="op_trenton.PNG">FUCK YOU</a>
+    <div id="wrapper">
+      <h1>G R U G</h1>
+      <video width="450" height="315">
+        <source src="reborn.mp4" type="video/mp4">
+      </video>
+      <button onclick="play()">
+        <b>PLAY</b>
+      </button>
+    </div>
+    <script>
+      function play(){
+        document.querySelector("video").play();
+      }
+    </script>
+  </body>
+</html>
