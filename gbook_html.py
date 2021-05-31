@@ -35,16 +35,19 @@ class GBookHtml:
     async def run(self):
         print("HTML report generator running...")
         while True:
-            await asyncio.sleep(self.mining_length)
-            gbook = await self.get_gbook()
-            head = None
-            tail = None
-            with open("head.html", "r") as f:
-                head = f.readlines()
-            with open("tail.html", "r") as f:
-                tail = f.readlines()
-            with open("report.html", "w") as f:
-                f.writelines(head)
-            with open("report.html", "a") as f:
-                f.write(gbook)
-                f.writelines(tail)
+            try:
+                await asyncio.sleep(self.mining_length)
+                gbook = await self.get_gbook()
+                head = None
+                tail = None
+                with open("head.html", "r") as f:
+                    head = f.readlines()
+                with open("tail.html", "r") as f:
+                    tail = f.readlines()
+                with open("report.html", "w") as f:
+                    f.writelines(head)
+                with open("report.html", "a") as f:
+                    f.write(gbook)
+                    f.writelines(tail)
+            except:
+                pass
