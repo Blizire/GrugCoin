@@ -15,12 +15,21 @@ class GBookHtml:
     async def get_gbook(self):
         db = TinyDB('db.json')
         msg = ""
+        users = []
         for obj in db.all():
             userid = obj["userid"]
             wallet = obj["wallet"]
             user = await self.client.fetch_user(userid)
-            msg += "<div class='gwallet'>\n<h2 class='username'>{user} :</h2>\n<h2 class='currency'>{wallet}gc</h2>\n</div>\n".format(user=user, wallet=wallet)
+            users.append({"username":user, "wallet":wallet})
+
+        # dictionary sort
+        users = sorted(users, key= lambda k: k["wallet"], reverse=True)
+
+        for user in users:
+            msg += "<div class='gwallet'>\n<h2 class='username'>{user} :</h2>\n<h2 class='currency'>{wallet}gc</h2>\n</div>\n".format(user=user["username"], wallet=user["wallet"])
+
         return msg
+
 
 
     async def run(self):
@@ -33,7 +42,7 @@ class GBookHtml:
             with open("head.html", "r") as f:
                 head = f.readlines()
             with open("tail.html", "r") as f:
-                tail = f.readlines()                
+                tail = f.readlines()
             with open("report.html", "w") as f:
                 f.writelines(head)
             with open("report.html", "a") as f:
