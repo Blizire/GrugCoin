@@ -144,7 +144,51 @@ class MyClient(discord.Client):
                 await message_splitting(msg, message)
             await message.channel.send(msg)
 
+        if "gbuy" in message.content:
+            db = TinyDB('db.json')
+            cursor = Query()
+            userid = message.author.id
+            guild = self.get_guild(799810866966298685)
+            current_currency = 0
 
+            try:
+                store_product = message.content.split()[1]
+                store_product_name = message.content.split()[2]
+            except:
+                pass
+
+            try:
+                current_currency = float(db.get(cursor.userid == userid)["wallet"])
+            except:
+                await message.channel.send("Do you even have a wallet?")
+
+            # buying a custom role
+            # enforces only one role per user ( strips all roles and applys the bought one. )
+            if store_product == "role":
+                if ( current_currency < 3  ):
+                    await message.channel.send("Insufficient funds.")
+                role = await guild.create_role(name=store_product_name, hoist=True)
+
+                if len(message.author.roles) > 1:
+                    for pre_existing_roles in message.author.roles[1:]:
+                        await message.author.remove_roles(pre_existing_roles)
+
+                await message.author.add_roles(role)
+                return
+
+            if store_product == "color":
+                if ( current_currency < 7 ):
+                    await message.channel.send("Insufficient funds.")
+                role = message.author.roles[1]
+                await role.edit(colour=discord.Colour(int(store_product_name, 0)))
+                return
+
+            if store_product == "menu":
+                await message.channel.send("``` menu:\n\tgbuy role [custome name] - seperates you from other users and get a custom name than you can color. WARNING you will lose original color and will have to buy again\n\tgbuy color [0x00FF00] - set your username color to anything in a 3 byte hex value```")    
+                return
+                
+            await message.channel.send("command gbuy\n\tex: gbuy menu\n\tex: gbuy role MYCUSTOMROLE\n\tex: gbuy color 0xFF00FF")
+            
 client = MyClient()
 client.run(client_token)
 
