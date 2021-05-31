@@ -165,28 +165,37 @@ class MyClient(discord.Client):
             # buying a custom role
             # enforces only one role per user ( strips all roles and applys the bought one. )
             if store_product == "role":
-                if ( current_currency < 3  ):
+                if ( current_currency < 10  ):
                     await message.channel.send("Insufficient funds.")
-                role = await guild.create_role(name=store_product_name, hoist=True)
+                
+                role = None
+                try:
+                    role = await guild.create_role(name=store_product_name, hoist=True)
+                    if len(message.author.roles) > 1:
+                        for pre_existing_roles in message.author.roles[1:]:
+                            await message.author.remove_roles(pre_existing_roles)
+                    await message.author.add_roles(role)                    
+                except:
+                    pass
 
-                if len(message.author.roles) > 1:
-                    for pre_existing_roles in message.author.roles[1:]:
-                        await message.author.remove_roles(pre_existing_roles)
-
-                await message.author.add_roles(role)
+                await take_coin(message.author.id, coin_value=10)
                 return
 
             if store_product == "color":
-                if ( current_currency < 7 ):
+                if ( current_currency < 10 ):
                     await message.channel.send("Insufficient funds.")
                 role = message.author.roles[1]
-                await role.edit(colour=discord.Colour(int(store_product_name, 0)))
+                try:
+                    await role.edit(colour=discord.Colour(int(store_product_name, 0)))
+                except:
+                    pass
+                await take_coin(message.author.id, coin_value=10)
                 return
 
             if store_product == "menu":
-                await message.channel.send("``` menu:\n\tgbuy role [custome name] - seperates you from other users and get a custom name than you can color. WARNING you will lose original color and will have to buy again\n\tgbuy color [0x00FF00] - set your username color to anything in a 3 byte hex value```")    
+                await message.channel.send("``` menu:\n\t(10gc) gbuy role [custome name] - seperates you from other users and get a custom name than you can color. WARNING you will lose original color and will have to buy again\n\t(10gc) gbuy color [0x00FF00] - set your username color to anything in a 3 byte hex value```")    
                 return
-                
+
             await message.channel.send("command gbuy\n\tex: gbuy menu\n\tex: gbuy role MYCUSTOMROLE\n\tex: gbuy color 0xFF00FF")
             
 client = MyClient()
