@@ -167,6 +167,7 @@ class MyClient(discord.Client):
             if store_product == "role":
                 if ( current_currency < 10  ):
                     await message.channel.send("Insufficient funds.")
+                    return
                 
                 role = None
                 try:
@@ -184,6 +185,7 @@ class MyClient(discord.Client):
             if store_product == "color":
                 if ( current_currency < 10 ):
                     await message.channel.send("Insufficient funds.")
+                    return
                 role = message.author.roles[1]
                 try:
                     await role.edit(colour=discord.Colour(int(store_product_name, 0)))
